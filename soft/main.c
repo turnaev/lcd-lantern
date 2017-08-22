@@ -19,135 +19,135 @@
 #define _v(v) (OCR0A=255-v)
 
 void delay(int ms){
-	for(;ms;ms--) {
-		_delay_ms(1);
-	}
+    for(;ms;ms--) {
+        _delay_ms(1);
+    }
 }
 
 void ledChangeBrightness(int from, int to, int t) {
-	int v;
+int v;
 	
-	if(from == to) {
-		return;
+    if(from == to) {
+        return;
 		
-	} else if(from < to) {
-		v = (int)t/(to - from);
-		for (;from <= to; from++) {
-			delay(v);
-			_v(from);
-		}
-	} else {
-		v = (int)t/(from - to);
-		for (;from >= to; from--) {
-			delay(v);
-			_v(from);
-		}
-	}
+    } else if(from < to) {
+        v = (int)t/(to - from);
+        for (;from <= to; from++) {
+            delay(v);
+            _v(from);
+        }
+    } else {
+        v = (int)t/(from - to);
+        for (;from >= to; from--) {
+            delay(v);
+            _v(from);
+        }
+    }
 }
 
 void timerOff() {
-	TCCR0A &= ~_BV(COM0A1) & ~_BV(COM0A0);  // выкл, ШИМ
-	_v(0);
+    TCCR0A &= ~_BV(COM0A1) & ~_BV(COM0A0);  // выкл, ШИМ
+    _v(0);
 }
 
 void timerOn(int v) {
-	TCCR0A |= _BV(COM0A1) | _BV(COM0A0) | _BV(WGM00);  // управление выходом, ШИМ
-	TCCR0B |= _BV(CS01); // делитель N = 8
-	_v(v);
+    TCCR0A |= _BV(COM0A1) | _BV(COM0A0) | _BV(WGM00);  // управление выходом, ШИМ
+    TCCR0B |= _BV(CS01); // делитель N = 8
+    _v(v);
 }
 
 enum step {ON, S1, FULL, MIG1, MIG2, OFF};
 volatile unsigned char state = 0;
 
 SIGNAL(INT0_vect) {
-	cli();
+    cli();
 	
-	GIMSK &= ~_BV(INT0);  // Запрещение прерываний PCINTn
+    GIMSK &= ~_BV(INT0);  // Запрещение прерываний PCINTn
 	
-	state++;
-	if(state > OFF) {
-		state = ON;
-	}
+    state++;
+    if(state > OFF) {
+        state = ON;
+    }
 
-	switch (state) {
+    switch (state) {
 		
-		case ON:
-			_ledOnTime(50);
-			_ledOffTime(100);
-			_ledOnTime(50);
-			_ledOffTime(100);
-			timerOn(0);
-			ledChangeBrightness(0, 40, TIMED);
-		break;
+    case ON:
+        _ledOnTime(50);
+        _ledOffTime(100);
+        _ledOnTime(50);
+        _ledOffTime(100);
+        timerOn(0);
+        ledChangeBrightness(0, 40, TIMED);
+        break;
 		
-		case S1:
-			ledChangeBrightness(40, 100, TIMED);
-		break;
+    case S1:
+        ledChangeBrightness(40, 100, TIMED);
+        break;
 
-		case FULL: //full
+    case FULL: //full
 		
-			ledChangeBrightness(100, 255, TIMED);
-			timerOff();
-			_ledOn();
+        ledChangeBrightness(100, 255, TIMED);
+        timerOff();
+        _ledOn();
 		
-			break;
-		case MIG1:
-			timerOff();
-			_ledOn();
-			break;
+        break;
+
+    case MIG1:
+        timerOff();
+        _ledOn();
+        break;
 			
-		case MIG2:
-			_ledOff();
-			timerOn(0);
-			break;
+    case MIG2:
+        _ledOff();
+        timerOn(0);
+        break;
 			
-		default: // OFF
-			timerOff();
-			_ledOnTime(10);
-			_ledOffTime(100);
-			_ledOnTime(10);
-			_ledOffTime(100);
+    default: // OFF
+        timerOff();
+        _ledOnTime(10);
+        _ledOffTime(100);
+        _ledOnTime(10);
+        _ledOffTime(100);
 		
-			_ledOff();
-		;
-	}
+        _ledOff();
+    }
 	
-	_delay_ms(300);
-	GIMSK |= _BV(INT0);  // Разрешение прерываний PCINTn
-	sei();
+    _delay_ms(300);
+    GIMSK |= _BV(INT0);  // Разрешение прерываний PCINTn
+    sei();
 }
 
 int main(void) {
 	
-	PORT = 0;
+    PORT = 0;
 	
-	DDRB &= ~_BV(BUTTON);
-	DDRB |= _BV(LED);
+    DDRB &= ~_BV(BUTTON);
+    DDRB |= _BV(LED);
 
-	MCUCR |= (1 << ISC01) & (0 << ISC00);  // прерывание по входу PCINT1 (PB1)
-	GIMSK |= _BV(INT0);  // Разрешение прерываний PCINTn
+    MCUCR |= (1 << ISC01) & (0 << ISC00);  // прерывание по входу PCINT1 (PB1)
+    GIMSK |= _BV(INT0);  // Разрешение прерываний PCINTn
 	 
-	_ledOff();
-	state = OFF;
+    _ledOff();
+    state = OFF;
 	
-	sei();
+    sei();
 
-	for (;;) {
-		if(state == MIG1) {
-			_ledOnTime(20);
-			_ledOffTime(100);
-			_ledOnTime(20);
-			_ledOffTime(100);
-			_ledOnTime(20);
-			_ledOffTime(1000);
-		} else if(state == MIG2) {
-			ledChangeBrightness(0, 255, 800);
-			_delay_ms(500);
-			ledChangeBrightness(255, 0, 800);
-			_delay_ms(1000);
-		}
-	}
+    for (;;) {
+        if(state == MIG1) {
+            _ledOnTime(20);
+            _ledOffTime(100);
+            _ledOnTime(20);
+            _ledOffTime(100);
+            _ledOnTime(20);
+            _ledOffTime(1000);
+        } else if(state == MIG2) {
+            ledChangeBrightness(0, 255, 800);
+            _delay_ms(500);
+            ledChangeBrightness(255, 0, 800);
+            _delay_ms(1000);
+        }
+    }
 	
-	return (0);
+    return (0);
 }
 
