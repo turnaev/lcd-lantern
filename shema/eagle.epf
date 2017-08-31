@@ -345,19 +345,11 @@ UsedLibrary="/home/lynx/eagle/eagle-7.2.0/lbr/xilinx-xc9.lbr"
 UsedLibrary="/home/lynx/eagle/eagle-7.2.0/lbr/xilinx-xcv.lbr"
 UsedLibrary="/home/lynx/eagle/eagle-7.2.0/lbr/zetex.lbr"
 UsedLibrary="/home/lynx/eagle/eagle-7.2.0/lbr/zilog.lbr"
-UsedLibrary="/home/lynx/eagle/lbr-ext/polyfuse-smd_20.lbr"
-UsedLibrary="/home/lynx/eagle/lbr-ext/rc-master-smd.lbr"
 
 [Win_1]
-Type="Control Panel"
-Loc="2481 331 3080 730"
-State=1
-Number=0
-
-[Win_2]
 Type="Schematic Editor"
-Loc="0 27 599 426"
-State=1
+Loc="18 46 617 445"
+State=0
 Number=1
 File="shema.sch"
 View="7.3914 33.4355 113.936 113.089"
@@ -399,17 +391,16 @@ ArcDirection=0
 AddLevel=2
 PadsSameType=0
 Layer=91
-Views=" 1: 7.3914 33.4355 113.936 113.089"
 Sheet="1"
 
-[Win_3]
+[Win_2]
 Type="Board Editor"
 Loc="40 40 639 439"
 State=1
 Number=2
 File="shema.brd"
-View="-0.52 -0.839634 26.52 31.969"
-WireWidths=" 0 0.254 0.3048 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0.4064"
+View="-3.0693 -0.847494 31.0396 35.6657"
+WireWidths=" 0 0.254 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0.4064 0.3048"
 PadDiameters=" 0.254 0.3048 0.4064 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0"
 PadDrills=" 0.5 0.6 0.7 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 2 2.2 2.8 3.2 0.8"
 ViaDiameters=" 0.254 0.3048 0.4064 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0"
@@ -446,10 +437,16 @@ SwapLevel=0
 ArcDirection=0
 AddLevel=2
 PadsSameType=0
-Layer=1
+Layer=16
+
+[Win_3]
+Type="Control Panel"
+Loc="492 131 1091 530"
+State=1
+Number=0
 
 [Desktop]
-Screen="3840 1200"
+Screen="3840 1080"
 Window="Win_1"
 Window="Win_2"
 Window="Win_3"
